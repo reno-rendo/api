@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: otakudesu-api
+    runtime: node
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3000
+      - key: SOURCE_BASE_URL
+        value: https://otakudesu.best
+      - key: REDIS_HOST
+        value: localhost
+      - key: LOG_LEVEL
+        value: info
+    healthCheckPath: /health
+    autoDeploy: true
