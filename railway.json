@@ -1,0 +1,5 @@
+{
+    "name": "otakudesu-api",
+    "dockerfilePath": "Dockerfile",
+    "healthcheckPath": "/health"
+}
