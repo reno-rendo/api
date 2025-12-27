@@ -55,15 +55,15 @@ export const getBatch = async (req: Request, res: Response): Promise<void> => {
 
     const batchLinks: BatchInfo['batchLinks'] = [];
 
-    // Parse download sections
-    $(selectors.download.container).each((_index: number, element: unknown) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $(selectors.download.container).each((_index: number, element: any) => {
         try {
             const $section = $(element);
             const quality = cleanText($section.find(selectors.download.quality).text());
 
             const links: { host: string; url: string }[] = [];
-
-            $section.find(selectors.download.links).each((_i: number, linkEl: unknown) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            $section.find(selectors.download.links).each((_i: number, linkEl: any) => {
                 const $link = $(linkEl);
                 const host = cleanText($link.text());
                 const url = $link.attr('href') || '';

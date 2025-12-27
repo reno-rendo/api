@@ -59,14 +59,24 @@ export class ApiError extends Error {
             timestamp: string;
         };
     } {
+        const errorObj: {
+            code: ErrorCode;
+            message: string;
+            details?: unknown;
+            timestamp: string;
+        } = {
+            code: this.code,
+            message: this.message,
+            timestamp: this.timestamp,
+        };
+
+        if (this.details) {
+            errorObj.details = this.details;
+        }
+
         return {
             success: false,
-            error: {
-                code: this.code,
-                message: this.message,
-                ...(this.details && { details: this.details }),
-                timestamp: this.timestamp,
-            },
+            error: errorObj,
         };
     }
 

@@ -71,8 +71,8 @@ export const getSchedule = async (req: Request, res: Response): Promise<void> =>
     const schedule: ScheduleItem[] = [];
     const selectors = SELECTORS.schedule;
 
-    // Parse each day's schedule
-    $(selectors.dayContainer).each((_index: number, element: unknown) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    $(selectors.dayContainer).each((_index: number, element: any) => {
         try {
             const $day = $(element);
             const dayHeader = cleanText($day.find(selectors.dayHeader).text()).toLowerCase();
@@ -85,8 +85,8 @@ export const getSchedule = async (req: Request, res: Response): Promise<void> =>
             if (dayParam !== 'all' && dayParam !== day) return;
 
             const animeList: ScheduleItem['anime'] = [];
-
-            $day.find(selectors.anime.container).each((_i: number, animeEl: unknown) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            $day.find(selectors.anime.container).each((_i: number, animeEl: any) => {
                 try {
                     const $anime = $(animeEl);
                     const $link = $anime.find('a');

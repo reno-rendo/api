@@ -104,10 +104,11 @@ export const logScraping = (
     details?: unknown
 ): void => {
     const level = action === 'error' ? 'error' : 'debug';
-    logger.log(level, `Scraping ${action}`, {
-        url,
-        ...(details && { details }),
-    });
+    const logData: Record<string, unknown> = { url };
+    if (details) {
+        logData.details = details;
+    }
+    logger.log(level, `Scraping ${action}`, logData);
 };
 
 /**

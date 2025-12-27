@@ -10,7 +10,8 @@ export interface ApiResponse<T> {
     data: T;
     cache?: {
         cached: boolean;
-        expiresAt: string | null;
+        expiresAt?: string | null;
+        source?: 'redis' | 'memory';
     };
 }
 
@@ -123,7 +124,7 @@ export interface HealthCheck {
     uptime?: number;
     checks?: {
         api: { status: string };
-        redis: { status: string; message?: string };
+        cache: { status: string; message?: string };
         source: { status: string; responseTime?: number; message?: string };
     };
 }

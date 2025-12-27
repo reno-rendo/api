@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { cacheService } from '../services/cache.service.js';
 import { scraperService } from '../utils/scraper.js';
+import { getCacheStats } from '../config/redis.js';
 import { HealthCheck } from '../types/common.types.js';
 
 /**
@@ -18,22 +19,25 @@ export const basicHealth = (_req: Request, res: Response): void => {
 };
 
 /**
- * Detailed health check with Redis and source website status
+ * Detailed health check
  * GET /health/detailed
  */
 export const detailedHealth = async (_req: Request, res: Response): Promise<void> => {
     const checks: HealthCheck['checks'] = {
         api: { status: 'ok' },
-        redis: { status: 'unknown' },
+        cache: { status: 'ok' },
         source: { status: 'unknown' },
     };
 
-    // Redis check
+    // Cache check (in-memory, always works)
     try {
-        const redisOk = await cacheService.ping();
-        checks.redis = redisOk ? { status: 'ok' } : { status: 'error', message: 'Ping failed' };
-    } catch (error) {
-        checks.redis = { status: 'error', message: (error as Error).message };
+        const cacheStats = getCacheStats();
+        checks.cache = {
+            status: 'ok',
+            message: `${cacheStats.size} items cached`
+        };
+    } catch {
+        checks.cache = { status: 'error', message: 'Cache unavailable' };
     }
 
     // Source website check

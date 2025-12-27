@@ -6,6 +6,7 @@ dotenv.config();
 
 /**
  * Environment variables validation schema
+ * Simplified for serverless deployment (no Redis)
  */
 const envSchema = z.object({
     // Server
@@ -15,12 +16,6 @@ const envSchema = z.object({
 
     // Source website
     SOURCE_BASE_URL: z.string().url().default('https://otakudesu.best'),
-
-    // Redis
-    REDIS_HOST: z.string().default('localhost'),
-    REDIS_PORT: z.coerce.number().default(6379),
-    REDIS_PASSWORD: z.string().optional(),
-    REDIS_DB: z.coerce.number().default(0),
 
     // Rate limiting
     RATE_LIMIT_WINDOW_MS: z.coerce.number().default(900000), // 15 minutes
