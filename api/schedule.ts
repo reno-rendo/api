@@ -24,10 +24,14 @@ function setCache(key: string, data: any, ttlSeconds: number) {
 async function fetchPage(url: string) {
     const response = await axios.get(url, {
         headers: {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-            'Accept': 'text/html,application/xhtml+xml',
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
+            'Accept-Encoding': 'gzip, deflate, br',
+            'Cache-Control': 'no-cache',
+            'Referer': SOURCE_BASE_URL,
         },
-        timeout: 10000,
+        timeout: 15000,
     });
     return cheerio.load(response.data);
 }
@@ -60,34 +64,86 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         const $ = await fetchPage(`${SOURCE_BASE_URL}/jadwal-rilis/`);
 
         const schedule: any[] = [];
+        let currentDay = '';
+        let currentAnime: any[] = [];
 
-        // Try multiple selectors for schedule
-        $('.kglist, .schedulepage, .jadwal').each((_, section) => {
-            const $section = $(section);
-            const dayText = $section.find('h2, h3, .day').text().toLowerCase().trim();
-            const day = dayMap[dayText] || dayText;
+        // Parse the page - jadwal uses h2 for days and li for anime links
+        $('h2, .kglist321 li a').each((_, el) => {
+            const $el = $(el);
+            const tagName = el.tagName?.toLowerCase() || (el as any).name;
 
-            if (dayFilter !== 'all' && day !== dayFilter) return;
+            if (tagName === 'h2') {
+                // Save previous day's data
+                if (currentDay && currentAnime.length > 0) {
+                    const englishDay = dayMap[currentDay.toLowerCase()] || currentDay.toLowerCase();
+                    if (dayFilter === 'all' || dayFilter === englishDay) {
+                        schedule.push({
+                            day: englishDay,
+                            dayIndonesian: currentDay,
+                            anime: [...currentAnime],
+                        });
+                    }
+                }
 
-            const anime: any[] = [];
-            $section.find('ul li a, .items a').each((_, el) => {
-                const $el = $(el);
+                // Start new day
+                currentDay = $el.text().trim();
+                currentAnime = [];
+            } else if (tagName === 'a') {
                 const href = $el.attr('href') || '';
                 const title = $el.text().trim();
-                const slug = href.split('/').filter(Boolean).pop() || '';
+                const slug = href.split('/anime/')[1]?.replace(/\/$/, '') || '';
 
-                if (slug && title) {
-                    anime.push({ slug, title });
+                if (slug && title && href.includes('/anime/')) {
+                    currentAnime.push({ slug, title, url: href });
                 }
-            });
-
-            if (anime.length > 0) {
-                schedule.push({ day, anime });
             }
         });
 
+        // Don't forget the last day
+        if (currentDay && currentAnime.length > 0) {
+            const englishDay = dayMap[currentDay.toLowerCase()] || currentDay.toLowerCase();
+            if (dayFilter === 'all' || dayFilter === englishDay) {
+                schedule.push({
+                    day: englishDay,
+                    dayIndonesian: currentDay,
+                    anime: [...currentAnime],
+                });
+            }
+        }
+
+        // Alternative parsing if above didn't work
+        if (schedule.length === 0) {
+            // Try different selectors
+            const allDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu'];
+
+            allDays.forEach(day => {
+                const anime: any[] = [];
+                $(`h2:contains("${day}")`).nextUntil('h2').find('a').each((_, el) => {
+                    const $el = $(el);
+                    const href = $el.attr('href') || '';
+                    const title = $el.text().trim();
+                    const slug = href.split('/anime/')[1]?.replace(/\/$/, '') || '';
+
+                    if (slug && title) {
+                        anime.push({ slug, title, url: href });
+                    }
+                });
+
+                const englishDay = dayMap[day.toLowerCase()];
+                if (anime.length > 0 && (dayFilter === 'all' || dayFilter === englishDay)) {
+                    schedule.push({
+                        day: englishDay,
+                        dayIndonesian: day,
+                        anime,
+                    });
+                }
+            });
+        }
+
         const data = {
             schedule,
+            totalDays: schedule.length,
+            totalAnime: schedule.reduce((sum, d) => sum + d.anime.length, 0),
             lastUpdated: new Date().toISOString(),
         };
 
