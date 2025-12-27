@@ -1,11 +1,11 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 import * as cheerio from 'cheerio';
 import { CheerioAPI } from 'cheerio';
-import { env } from '../config/env.js';
-import { logger } from './logger.js';
-import { delay, randomDelay } from './helpers.js';
-import { withRetry } from './retry.js';
-import { ApiError, ErrorCode } from './errors.js';
+import { env } from '../config/env';
+import { logger } from './logger';
+import { delay, randomDelay } from './helpers';
+import { withRetry } from './retry';
+import { ApiError, ErrorCode } from './errors';
 
 /**
  * User agents for rotation to avoid detection

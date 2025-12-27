@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction, ErrorRequestHandler } from 'express';
 import { ZodError } from 'zod';
-import { ApiError, ErrorCode, isApiError } from '../utils/errors.js';
-import { logger } from '../utils/logger.js';
-import { isDevelopment } from '../config/env.js';
+import { ApiError, ErrorCode, isApiError } from '../utils/errors';
+import { logger } from '../utils/logger';
+import { isDevelopment } from '../config/env';
 
 /**
  * Global error handler middleware

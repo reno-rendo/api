@@ -1,6 +1,4 @@
-// Vercel Serverless Handler
-// This file wraps the Express app for Vercel deployment
+// Vercel Serverless Handler for Express
+const app = require('../dist/app.js').default;
 
-import app from '../dist/app.js';
-
-export default app;
+module.exports = app;

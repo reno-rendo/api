@@ -1,8 +1,8 @@
 {
     "compilerOptions": {
         "target": "ES2022",
-        "module": "NodeNext",
-        "moduleResolution": "NodeNext",
+        "module": "CommonJS",
+        "moduleResolution": "Node",
         "outDir": "./dist",
         "rootDir": "./src",
         "strict": true,
@@ -19,34 +19,7 @@
         "noUnusedParameters": false,
         "exactOptionalPropertyTypes": false,
         "noFallthroughCasesInSwitch": true,
-        "allowSyntheticDefaultImports": true,
-        "baseUrl": "./src",
-        "paths": {
-            "@/*": [
-                "./*"
-            ],
-            "@config/*": [
-                "./config/*"
-            ],
-            "@controllers/*": [
-                "./controllers/*"
-            ],
-            "@services/*": [
-                "./services/*"
-            ],
-            "@utils/*": [
-                "./utils/*"
-            ],
-            "@middleware/*": [
-                "./middleware/*"
-            ],
-            "@types/*": [
-                "./types/*"
-            ],
-            "@schemas/*": [
-                "./schemas/*"
-            ]
-        }
+        "allowSyntheticDefaultImports": true
     },
     "include": [
         "src/**/*"
@@ -54,6 +27,7 @@
     "exclude": [
         "node_modules",
         "dist",
-        "tests"
+        "tests",
+        "api"
     ]
 }

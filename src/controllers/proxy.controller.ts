@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 import axios from 'axios';
-import { env } from '../config/env.js';
-import { proxyRateLimiter } from '../config/rate-limit.js';
-import { logger } from '../utils/logger.js';
-import { ApiError } from '../utils/errors.js';
+import { env } from '../config/env';
+import { proxyRateLimiter } from '../config/rate-limit';
+import { logger } from '../utils/logger';
+import { ApiError } from '../utils/errors';
 
 /**
  * Allowed domains for proxy

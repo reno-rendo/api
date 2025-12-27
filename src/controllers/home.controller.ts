@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
 import { CheerioAPI } from 'cheerio';
-import { scraperService } from '../utils/scraper.js';
-import { cacheService } from '../services/cache.service.js';
-import { generateCacheKey, getTTL } from '../config/cache.js';
-import { SELECTORS, URL_PATTERNS } from '../config/selectors.js';
-import { env } from '../config/env.js';
-import { logger } from '../utils/logger.js';
-import { ApiError } from '../utils/errors.js';
-import { cleanText, extractSlug, ensureAbsoluteUrl, extractEpisodeNumber } from '../utils/helpers.js';
-import { sanitizeText, sanitizeUrl } from '../utils/sanitize.js';
-import { SpotlightItem, LatestEpisodeItem } from '../types/anime.types.js';
-import { ApiResponse } from '../types/common.types.js';
+import { scraperService } from '../utils/scraper';
+import { cacheService } from '../services/cache.service';
+import { generateCacheKey, getTTL } from '../config/cache';
+import { SELECTORS, URL_PATTERNS } from '../config/selectors';
+import { env } from '../config/env';
+import { logger } from '../utils/logger';
+import { ApiError } from '../utils/errors';
+import { cleanText, extractSlug, ensureAbsoluteUrl, extractEpisodeNumber } from '../utils/helpers';
+import { sanitizeText, sanitizeUrl } from '../utils/sanitize';
+import { SpotlightItem, LatestEpisodeItem } from '../types/anime.types';
+import { ApiResponse } from '../types/common.types';
 
 /**
  * Home page data structure

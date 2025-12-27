@@ -1,5 +1,5 @@
-import { env, isTest } from './env.js';
-import { logger } from '../utils/logger.js';
+import { env, isTest } from './env';
+import { logger } from '../utils/logger';
 
 /**
  * Simple in-memory cache for serverless environments

@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
-import { cacheService, CacheMetadata } from '../services/cache.service.js';
-import { generateCacheKey, getTTL, cachePrefix } from '../config/cache.js';
-import { logger } from '../utils/logger.js';
+import { cacheService, CacheMetadata } from '../services/cache.service';
+import { generateCacheKey, getTTL, cachePrefix } from '../config/cache';
+import { logger } from '../utils/logger';
 
 /**
  * Extended Response with cache info

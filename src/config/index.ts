@@ -2,10 +2,10 @@
  * Configuration module exports
  */
 
-export { env, isDevelopment, isProduction, isTest } from './env.js';
-export { cacheOps, pingCache, getCacheStats } from './redis.js';
-export { cacheTTL, cachePrefix, generateCacheKey, getTTL } from './cache.js';
-export { SELECTORS, URL_PATTERNS } from './selectors.js';
+export { env, isDevelopment, isProduction, isTest } from './env';
+export { cacheOps, pingCache, getCacheStats } from './redis';
+export { cacheTTL, cachePrefix, generateCacheKey, getTTL } from './cache';
+export { SELECTORS, URL_PATTERNS } from './selectors';
 export {
     rateLimitConfig,
     createRateLimiter,
@@ -13,4 +13,4 @@ export {
     searchRateLimiter,
     streamRateLimiter,
     proxyRateLimiter,
-} from './rate-limit.js';
+} from './rate-limit';

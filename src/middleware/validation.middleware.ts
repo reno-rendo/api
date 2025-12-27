@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction, RequestHandler } from 'express';
 import { ZodSchema } from 'zod';
-import { ApiError, ErrorCode } from '../utils/errors.js';
+import { ApiError, ErrorCode } from '../utils/errors';
 
 /**
  * Validation source types

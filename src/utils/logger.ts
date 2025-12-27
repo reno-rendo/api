@@ -1,6 +1,6 @@
 import winston from 'winston';
 import path from 'path';
-import { env, isDevelopment, isTest } from '../config/env.js';
+import { env, isDevelopment, isTest } from '../config/env';
 
 /**
  * Custom log format

@@ -1,8 +1,8 @@
 import { Request, Response } from 'express';
-import { cacheService } from '../services/cache.service.js';
-import { scraperService } from '../utils/scraper.js';
-import { getCacheStats } from '../config/redis.js';
-import { HealthCheck } from '../types/common.types.js';
+import { cacheService } from '../services/cache.service';
+import { scraperService } from '../utils/scraper';
+import { getCacheStats } from '../config/redis';
+import { HealthCheck } from '../types/common.types';
 
 /**
  * Basic health check

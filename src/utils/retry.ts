@@ -1,5 +1,5 @@
-import { logger } from './logger.js';
-import { ApiError, ErrorCode } from './errors.js';
+import { logger } from './logger';
+import { ApiError, ErrorCode } from './errors';
 
 /**
  * Default retry configuration

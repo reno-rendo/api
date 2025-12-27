@@ -2,4 +2,4 @@
  * Schemas module exports
  */
 
-export * from './request.schemas.js';
+export * from './request.schemas';

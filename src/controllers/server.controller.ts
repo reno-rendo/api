@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { scraperService } from '../utils/scraper.js';
-import { cacheService } from '../services/cache.service.js';
-import { generateCacheKey, getTTL } from '../config/cache.js';
-import { URL_PATTERNS, SELECTORS } from '../config/selectors.js';
-import { logger } from '../utils/logger.js';
-import { ApiError } from '../utils/errors.js';
-import { cleanText } from '../utils/helpers.js';
-import { sanitizeText } from '../utils/sanitize.js';
-import { ServerInfo } from '../types/common.types.js';
-import { ApiResponse } from '../types/common.types.js';
+import { scraperService } from '../utils/scraper';
+import { cacheService } from '../services/cache.service';
+import { generateCacheKey, getTTL } from '../config/cache';
+import { URL_PATTERNS, SELECTORS } from '../config/selectors';
+import { logger } from '../utils/logger';
+import { ApiError } from '../utils/errors';
+import { cleanText } from '../utils/helpers';
+import { sanitizeText } from '../utils/sanitize';
+import { ServerInfo } from '../types/common.types';
+import { ApiResponse } from '../types/common.types';
 
 /**
  * Servers response data

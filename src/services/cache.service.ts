@@ -1,6 +1,6 @@
-import { cacheOps } from '../config/redis.js';
-import { generateCacheKey, getTTL } from '../config/cache.js';
-import { logger } from '../utils/logger.js';
+import { cacheOps } from '../config/redis';
+import { generateCacheKey, getTTL } from '../config/cache';
+import { logger } from '../utils/logger';
 
 /**
  * Cache metadata added to responses

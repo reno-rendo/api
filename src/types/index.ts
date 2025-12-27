@@ -2,5 +2,5 @@
  * Types module exports
  */
 
-export * from './anime.types.js';
-export * from './common.types.js';
+export * from './anime.types';
+export * from './common.types';

@@ -13,15 +13,15 @@ import {
     getSchedule,
     getBatch,
     proxyRequest,
-} from '../controllers/index.js';
-import { asyncHandler } from '../middleware/error.middleware.js';
-import { validateQuery, validateParams } from '../middleware/validation.middleware.js';
+} from '../controllers/index';
+import { asyncHandler } from '../middleware/error.middleware';
+import { validateQuery, validateParams } from '../middleware/validation.middleware';
 import {
     globalRateLimiter,
     searchRateLimiter,
     streamRateLimiter,
     proxyRateLimiter,
-} from '../config/rate-limit.js';
+} from '../config/rate-limit';
 import {
     slugParamsSchema,
     searchQuerySchema,
@@ -30,7 +30,7 @@ import {
     suggestQuerySchema,
     scheduleQuerySchema,
     proxyQuerySchema,
-} from '../schemas/request.schemas.js';
+} from '../schemas/request.schemas';
 
 const router = Router();
 

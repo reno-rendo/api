@@ -2,10 +2,10 @@ import express, { Express, Request, Response, NextFunction } from 'express';
 import helmet from 'helmet';
 import cors from 'cors';
 import compression from 'compression';
-import { env, isDevelopment, isProduction } from './config/env.js';
-import routes from './routes/index.js';
-import { errorHandler, notFoundHandler } from './middleware/error.middleware.js';
-import { logger } from './utils/logger.js';
+import { env, isDevelopment, isProduction } from './config/env';
+import routes from './routes/index';
+import { errorHandler, notFoundHandler } from './middleware/error.middleware';
+import { logger } from './utils/logger';
 
 /**
  * Create Express application

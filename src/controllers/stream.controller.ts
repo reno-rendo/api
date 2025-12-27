@@ -1,14 +1,14 @@
 import { Request, Response } from 'express';
-import { scraperService } from '../utils/scraper.js';
-import { cacheService } from '../services/cache.service.js';
-import { generateCacheKey, getTTL } from '../config/cache.js';
-import { URL_PATTERNS, SELECTORS } from '../config/selectors.js';
-import { env } from '../config/env.js';
-import { logger } from '../utils/logger.js';
-import { ApiError } from '../utils/errors.js';
-import { sanitizeText, sanitizeUrl } from '../utils/sanitize.js';
-import { StreamInfo } from '../types/common.types.js';
-import { ApiResponse } from '../types/common.types.js';
+import { scraperService } from '../utils/scraper';
+import { cacheService } from '../services/cache.service';
+import { generateCacheKey, getTTL } from '../config/cache';
+import { URL_PATTERNS, SELECTORS } from '../config/selectors';
+import { env } from '../config/env';
+import { logger } from '../utils/logger';
+import { ApiError } from '../utils/errors';
+import { sanitizeText, sanitizeUrl } from '../utils/sanitize';
+import { StreamInfo } from '../types/common.types';
+import { ApiResponse } from '../types/common.types';
 
 type StreamResponse = ApiResponse<StreamInfo>;
 

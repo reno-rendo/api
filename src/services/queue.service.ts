@@ -1,5 +1,5 @@
 import PQueue from 'p-queue';
-import { logger } from '../utils/logger.js';
+import { logger } from '../utils/logger';
 
 /**
  * Queue configuration

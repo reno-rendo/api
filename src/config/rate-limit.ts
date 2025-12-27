@@ -1,5 +1,5 @@
 import rateLimit from 'express-rate-limit';
-import { env } from './env.js';
+import { env } from './env';
 
 /**
  * Rate limit configuration per endpoint type

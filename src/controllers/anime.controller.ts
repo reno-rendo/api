@@ -1,16 +1,16 @@
 import { Request, Response } from 'express';
 import { CheerioAPI } from 'cheerio';
-import { scraperService } from '../utils/scraper.js';
-import { cacheService } from '../services/cache.service.js';
-import { generateCacheKey, getTTL } from '../config/cache.js';
-import { URL_PATTERNS, SELECTORS } from '../config/selectors.js';
-import { env } from '../config/env.js';
-import { logger } from '../utils/logger.js';
-import { ApiError } from '../utils/errors.js';
-import { cleanText, extractSlug, ensureAbsoluteUrl, parseNumber } from '../utils/helpers.js';
-import { sanitizeText, sanitizeUrl, sanitizeHtml } from '../utils/sanitize.js';
-import { AnimeDetail, EpisodeListItem, AnimeType, AnimeStatus } from '../types/anime.types.js';
-import { ApiResponse } from '../types/common.types.js';
+import { scraperService } from '../utils/scraper';
+import { cacheService } from '../services/cache.service';
+import { generateCacheKey, getTTL } from '../config/cache';
+import { URL_PATTERNS, SELECTORS } from '../config/selectors';
+import { env } from '../config/env';
+import { logger } from '../utils/logger';
+import { ApiError } from '../utils/errors';
+import { cleanText, extractSlug, ensureAbsoluteUrl, parseNumber } from '../utils/helpers';
+import { sanitizeText, sanitizeUrl, sanitizeHtml } from '../utils/sanitize';
+import { AnimeDetail, EpisodeListItem, AnimeType, AnimeStatus } from '../types/anime.types';
+import { ApiResponse } from '../types/common.types';
 
 type AnimeResponse = ApiResponse<AnimeDetail>;
 
