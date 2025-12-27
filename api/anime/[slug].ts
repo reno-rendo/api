@@ -1,52 +1,97 @@
 // Vercel Serverless Function - Anime Detail Endpoint
+// Using alternative approaches to bypass bot protection
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
 const SOURCE_BASE_URL = 'https://otakudesu.best';
 
-// User agent rotation to avoid detection
+// User agent rotation - more comprehensive list
 const userAgents = [
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Safari/605.1.15',
     'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:121.0) Gecko/20100101 Firefox/121.0',
     'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    'Mozilla/5.0 (iPhone; CPU iPhone OS 17_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2 Mobile/15E148 Safari/604.1',
+];
+
+// Free CORS proxies to try
+const PROXY_URLS = [
+    'https://api.allorigins.win/raw?url=',
+    'https://corsproxy.io/?',
+    'https://api.codetabs.com/v1/proxy?quest=',
 ];
 
 function getRandomUserAgent() {
     return userAgents[Math.floor(Math.random() * userAgents.length)];
 }
 
-async function fetchPage(url: string) {
-    // Add delay to be polite
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
+// Try fetching with different methods
+async function fetchWithRetry(url: string): Promise<cheerio.CheerioAPI | null> {
+    // Method 1: Direct request with enhanced headers
+    try {
+        const response = await axios.get(url, {
+            headers: {
+                'User-Agent': getRandomUserAgent(),
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8',
+                'Accept-Language': 'id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Cache-Control': 'max-age=0',
+                'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120"',
+                'Sec-Ch-Ua-Mobile': '?0',
+                'Sec-Ch-Ua-Platform': '"Windows"',
+                'Sec-Fetch-Dest': 'document',
+                'Sec-Fetch-Mode': 'navigate',
+                'Sec-Fetch-Site': 'same-origin',
+                'Sec-Fetch-User': '?1',
+                'Upgrade-Insecure-Requests': '1',
+                'Referer': SOURCE_BASE_URL + '/anime/',
+                'Cookie': 'viewed=1',
+            },
+            timeout: 15000,
+            maxRedirects: 5,
+            validateStatus: (status) => status < 500,
+        });
 
-    const response = await axios.get(url, {
-        headers: {
-            'User-Agent': getRandomUserAgent(),
-            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
-            'Accept-Language': 'en-US,en;q=0.9,id;q=0.8',
-            'Accept-Encoding': 'gzip, deflate, br',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache',
-            'Sec-Ch-Ua': '"Not_A Brand";v="8", "Chromium";v="120", "Google Chrome";v="120"',
-            'Sec-Ch-Ua-Mobile': '?0',
-            'Sec-Ch-Ua-Platform': '"Windows"',
-            'Sec-Fetch-Dest': 'document',
-            'Sec-Fetch-Mode': 'navigate',
-            'Sec-Fetch-Site': 'none',
-            'Sec-Fetch-User': '?1',
-            'Upgrade-Insecure-Requests': '1',
-            'Referer': SOURCE_BASE_URL + '/',
-            'Origin': SOURCE_BASE_URL,
-        },
-        timeout: 15000,
-        maxRedirects: 5,
-    });
-    return cheerio.load(response.data);
+        if (response.status === 200) {
+            return cheerio.load(response.data);
+        }
+    } catch (e) {
+        // Continue to try proxies
+    }
+
+    // Method 2: Try through CORS proxies
+    for (const proxyBase of PROXY_URLS) {
+        try {
+            const proxyUrl = proxyBase + encodeURIComponent(url);
+            const response = await axios.get(proxyUrl, {
+                headers: {
+                    'User-Agent': getRandomUserAgent(),
+                },
+                timeout: 15000,
+            });
+
+            if (response.status === 200 && response.data) {
+                return cheerio.load(response.data);
+            }
+        } catch (e) {
+            // Try next proxy
+            continue;
+        }
+    }
+
+    return null;
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
+    // Set CORS headers
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
+
+    if (req.method === 'OPTIONS') {
+        return res.status(200).end();
+    }
+
     try {
         const { slug } = req.query;
 
@@ -60,31 +105,48 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             });
         }
 
-        const $ = await fetchPage(`${SOURCE_BASE_URL}/anime/${slug}/`);
+        const targetUrl = `${SOURCE_BASE_URL}/anime/${slug}/`;
+        const $ = await fetchWithRetry(targetUrl);
+
+        if (!$) {
+            return res.status(503).json({
+                success: false,
+                error: {
+                    code: 'SOURCE_UNAVAILABLE',
+                    message: 'Unable to fetch from source. All methods failed.',
+                    suggestion: 'Try again later or use a different anime slug.',
+                },
+            });
+        }
 
         // Extract anime details - multiple selector attempts
         let title = '';
 
         // Try various title selectors
-        title = $('.infozingle span:contains("Judul") b').parent().text().replace(/Judul\s*:?\s*/i, '').trim();
+        title = $('.infozingle span:contains("Judul")').parent().text().replace(/Judul\s*:?\s*/i, '').trim();
         if (!title) title = $('.infozin span b').first().parent().text().replace(/Judul\s*:?\s*/i, '').trim();
         if (!title) title = $('h1.jdlrx').text().trim();
         if (!title) title = $('h1.entry-title').text().trim();
         if (!title) title = $('.venser h1').text().trim();
+        if (!title) title = $('title').text().split('|')[0]?.trim() || '';
 
         if (!title) {
             return res.status(404).json({
                 success: false,
                 error: {
                     code: 'NOT_FOUND',
-                    message: 'Anime not found',
+                    message: 'Anime not found or page structure changed',
                 },
             });
         }
 
-        const thumbnail = $('.fotoanime img').attr('src') || $('.thumb img').attr('src') || '';
+        const thumbnail = $('.fotoanime img').attr('src') ||
+            $('.thumb img').attr('src') ||
+            $('img.wp-post-image').attr('src') || '';
+
         const synopsis = $('.sinopc p').map((_, el) => $(el).text().trim()).get().join(' ') ||
-            $('.sinopsis p').text().trim() || '';
+            $('.sinopsis p').text().trim() ||
+            $('p:contains("Sinopsis")').next('p').text().trim() || '';
 
         // Extract info fields
         const info: Record<string, string> = {};
@@ -102,9 +164,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
 
         // Extract genres
         const genres: string[] = [];
-        $('.infozingle a[href*="genre"], .genre-info a').each((_, el) => {
+        $('.infozingle a[href*="genre"], .genre-info a, a[href*="/genre/"]').each((_, el) => {
             const genre = $(el).text().trim();
-            if (genre) genres.push(genre);
+            if (genre && !genres.includes(genre)) genres.push(genre);
         });
 
         // Extract episodes
@@ -141,18 +203,6 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
             },
         });
     } catch (error: any) {
-        // Check if it's a 403 error
-        if (error.response?.status === 403) {
-            return res.status(503).json({
-                success: false,
-                error: {
-                    code: 'SOURCE_BLOCKED',
-                    message: 'Source temporarily blocked access. Try again later.',
-                    hint: 'The source website has bot protection that may block requests from cloud IPs.',
-                },
-            });
-        }
-
         return res.status(500).json({
             success: false,
             error: {
