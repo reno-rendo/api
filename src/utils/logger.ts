@@ -1,15 +1,4 @@
 import winston from 'winston';
-import path from 'path';
-import { env, isDevelopment, isTest } from '../config/env';
-
-/**
- * Custom log format
- */
-const logFormat = winston.format.combine(
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-);
 
 /**
  * Console format for development
@@ -24,47 +13,37 @@ const consoleFormat = winston.format.combine(
 );
 
 /**
+ * JSON format for production/serverless
+ */
+const jsonFormat = winston.format.combine(
+    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+    winston.format.errors({ stack: true }),
+    winston.format.json()
+);
+
+/**
+ * Check environment
+ */
+const isDev = process.env.NODE_ENV === 'development';
+const isTest = process.env.NODE_ENV === 'test';
+
+/**
  * Create Winston logger instance
+ * Uses console-only (no file system for serverless compatibility)
  */
 const createLogger = (): winston.Logger => {
     const transports: winston.transport[] = [];
 
-    // File transports (not in test mode)
-    if (!isTest) {
-        // Error logs
-        transports.push(
-            new winston.transports.File({
-                filename: path.join(env.LOG_FILE_PATH, 'error.log'),
-                level: 'error',
-                maxsize: 10 * 1024 * 1024, // 10MB
-                maxFiles: 5,
-                format: logFormat,
-            })
-        );
-
-        // Combined logs
-        transports.push(
-            new winston.transports.File({
-                filename: path.join(env.LOG_FILE_PATH, 'combined.log'),
-                maxsize: 10 * 1024 * 1024, // 10MB
-                maxFiles: 10,
-                format: logFormat,
-            })
-        );
-    }
-
-    // Console transport for development
-    if (isDevelopment) {
-        transports.push(
-            new winston.transports.Console({
-                format: consoleFormat,
-            })
-        );
-    }
+    // Always use console - works in all environments including serverless
+    transports.push(
+        new winston.transports.Console({
+            format: isDev ? consoleFormat : jsonFormat,
+        })
+    );
 
     return winston.createLogger({
-        level: isTest ? 'silent' : env.LOG_LEVEL,
-        format: logFormat,
+        level: isTest ? 'silent' : (process.env.LOG_LEVEL || 'info'),
+        format: jsonFormat,
         defaultMeta: { service: 'otakudesu-api' },
         transports,
     });
