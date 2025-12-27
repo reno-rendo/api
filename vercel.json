@@ -15,6 +15,26 @@
     {
       "source": "/api/home",
       "destination": "/api/home"
+    },
+    {
+      "source": "/api/genres",
+      "destination": "/api/genres"
+    },
+    {
+      "source": "/api/search",
+      "destination": "/api/search"
+    },
+    {
+      "source": "/api/schedule",
+      "destination": "/api/schedule"
+    },
+    {
+      "source": "/api/anime/:slug",
+      "destination": "/api/anime/:slug"
+    },
+    {
+      "source": "/api/episodes/:slug",
+      "destination": "/api/episodes/:slug"
     }
   ]
 }
